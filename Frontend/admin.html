@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaChillMC - Quản lý</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/home.css" />
+  <link rel="stylesheet" href="./css/admin.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html" class="brand">
+      <div class="brand-icon">◈</div>
+      <span>NOVA<span>CHILL</span>MC</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html">⌂ Trang chủ</a>
+      <a href="./index.html#features">✧ Tính năng</a>
+      <a href="./gallery.html">▧ Hình ảnh</a>
+      <a href="./register.html">✎ Đăng ký</a>
+      <a class="active" href="./admin.html">✥ Quản lý</a>
+    </nav>
+  </header>
+
+  <main class="admin-page">
+    <section class="admin-top">
+      <div>
+        <div class="pill">◆ ADMIN PANEL</div>
+        <h1>Quản lý player</h1>
+      </div>
+
+      <div class="count-box">
+        <span>Tổng player</span>
+        <strong id="totalPlayers">0</strong>
+      </div>
+    </section>
+
+    <section class="admin-layout">
+      <form id="addPlayerForm" class="admin-card">
+        <h2>Thêm player</h2>
+
+        <input id="adminIngame" type="text" placeholder="Tên ingame" required>
+        <input id="adminFacebook" type="text" placeholder="Tên Facebook" required>
+
+        <select id="adminPlatform" required>
+          <option value="">Chọn nền tảng</option>
+          <option value="PE">PE / Bedrock</option>
+          <option value="PC">PC / Java</option>
+        </select>
+
+        <textarea id="adminNote" rows="4" placeholder="Ghi chú"></textarea>
+
+        <button type="submit">THÊM PLAYER</button>
+      </form>
+
+      <section class="admin-card">
+        <h2>Danh sách player</h2>
+        <div id="playerList" class="player-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="./js/config.js"></script>
+  <script src="./js/admin.js"></script>
+</body>
+</html>

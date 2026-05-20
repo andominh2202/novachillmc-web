@@ -1,0 +1,98 @@
+.gallery-page {
+  min-height: 100vh;
+}
+
+.gallery-hero {
+  position: relative;
+  height: 420px;
+
+  background:
+    url("../assets/images/home.png")
+    center center / cover no-repeat;
+
+  overflow: hidden;
+}
+
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(2,7,17,0.42),
+      rgba(2,7,17,0.88)
+    );
+}
+
+.gallery-hero-content {
+  position: relative;
+  z-index: 2;
+
+  padding: 120px 42px;
+}
+
+.gallery-hero h1 {
+  margin-top: 18px;
+
+  font-size: clamp(46px, 7vw, 76px);
+  line-height: 1.05;
+  font-weight: 900;
+}
+
+.gallery-hero h1 span {
+  background:
+    linear-gradient(
+      90deg,
+      #20e3ff,
+      #267dff,
+      #8d5bff
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gallery-hero p {
+  max-width: 640px;
+
+  margin-top: 18px;
+
+  color: #edf5ff;
+  line-height: 1.8;
+  font-size: 18px;
+}
+
+.gallery-wrapper {
+  padding: 40px;
+}
+
+.gallery-masonry {
+  columns: 4 280px;
+  column-gap: 16px;
+}
+
+.gallery-masonry img {
+  width: 100%;
+
+  margin-bottom: 16px;
+
+  border-radius: 18px;
+
+  border: 1px solid rgba(55, 148, 255, 0.45);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.gallery-masonry img:hover {
+  transform: translateY(-6px);
+
+  box-shadow:
+    0 0 28px rgba(0, 153, 255, 0.22),
+    0 20px 40px rgba(0,0,0,0.35);
+}
