@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function showMessage(text, type) {
     formMessage.textContent = text;
     formMessage.className = "";
-
     formMessage.classList.add(`${type}-message`);
 
     formMessage.style.display = "block";
@@ -44,8 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    console.log("submit clicked");
-
     showMessage("Đang gửi đăng ký...", "info");
 
     const player = {
@@ -65,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("Chưa cấu hình APP_CONFIG.API_URL");
       }
 
-      const response = await fetch(`${APP_CONFIG.API_URL}/players`, {
+      const response = await fetch(`${APP_CONFIG.API_URL}/players/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -80,11 +77,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       form.reset();
-
       showMessage("Bạn đã đăng ký thành công!", "success");
 
       console.log("success", data);
-
     } catch (error) {
       showMessage(error.message, "error");
       console.error("register error:", error);

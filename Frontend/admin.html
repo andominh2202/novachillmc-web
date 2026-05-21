@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="./assets/images/favicon.png">
   <title>NovaChillMC - Quản lý</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,6 +22,7 @@
       <a href="./index.html">⌂ Trang chủ</a>
       <a href="./index.html#features">✧ Tính năng</a>
       <a href="./gallery.html">▧ Hình ảnh</a>
+      <a href="./rules.html">⚖ Luật server</a>
       <a href="./register.html">✎ Đăng ký</a>
       <a class="active" href="./admin.html">✥ Quản lý</a>
     </nav>
@@ -63,6 +65,33 @@
       </section>
     </section>
   </main>
+
+  <!-- ADMIN LOGIN MODAL -->
+  <div id="admin-modal" class="admin-modal">
+    <div class="admin-box">
+
+      <div class="admin-lock">
+        🔐
+      </div>
+
+      <h2>NovaChillMC Admin</h2>
+
+      <p>
+        Nhập khóa quản trị để truy cập bảng điều khiển
+      </p>
+
+      <input
+        type="password"
+        id="admin-password"
+        placeholder="Nhập admin key..."
+      >
+
+      <button id="admin-login-btn">
+        Truy cập quản trị
+      </button>
+
+    </div>
+  </div>
 
   <script src="./js/config.js"></script>
   <script src="./js/admin.js"></script>

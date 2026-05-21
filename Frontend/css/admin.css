@@ -129,3 +129,140 @@
     align-items: stretch;
   }
 }
+
+.admin-modal{
+position: fixed;
+inset: 0;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+background: rgba(5,10,20,.72);
+
+backdrop-filter: blur(14px);
+
+z-index: 9999;
+}
+
+.admin-box{
+width: 420px;
+
+padding: 38px;
+
+border-radius: 28px;
+
+background:
+linear-gradient(
+180deg,
+rgba(18,24,38,.96),
+rgba(10,14,24,.98)
+);
+
+border: 1px solid rgba(255,255,255,.08);
+
+box-shadow:
+0 0 60px rgba(0,255,255,.08),
+0 20px 50px rgba(0,0,0,.5);
+
+text-align:center;
+
+animation: adminPop .25s ease;
+}
+
+.admin-lock{
+font-size: 52px;
+margin-bottom: 12px;
+}
+
+.admin-box h2{
+color:#fff;
+font-size:32px;
+font-weight:800;
+
+margin-bottom:10px;
+}
+
+.admin-box p{
+color:#9fb0d0;
+
+line-height:1.6;
+
+margin-bottom:24px;
+}
+
+.admin-box input{
+width:100%;
+
+padding:16px 18px;
+
+border-radius:16px;
+border:1px solid rgba(255,255,255,.08);
+
+background:#0f172a;
+
+color:white;
+
+outline:none;
+
+font-size:15px;
+
+margin-bottom:18px;
+
+transition:.2s;
+}
+
+.admin-box input:focus{
+border-color:#38bdf8;
+
+box-shadow:
+0 0 0 4px rgba(56,189,248,.12);
+}
+
+.admin-box button{
+width:100%;
+
+padding:16px;
+
+border:none;
+border-radius:16px;
+
+font-size:15px;
+font-weight:800;
+
+color:white;
+
+cursor:pointer;
+
+background:
+linear-gradient(
+135deg,
+#06b6d4,
+#2563eb
+);
+
+transition:.22s;
+}
+
+.admin-box button:hover{
+transform: translateY(-2px);
+
+box-shadow:
+0 10px 25px rgba(37,99,235,.35);
+}
+
+@keyframes adminPop{
+from{
+opacity:0;
+transform:
+scale(.92)
+translateY(10px);
+}
+
+to{
+opacity:1;
+transform:
+scale(1)
+translateY(0);
+}
+}

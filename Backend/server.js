@@ -1,21 +1,40 @@
 const express = require("express");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const playersRoute = require("./routes/players");
+const checkAdmin = require("./middleware/auth");
 
 const app = express();
+
+app.use(helmet());
 
 app.use(cors({
   origin: [
     "http://127.0.0.1:5500",
     "http://localhost:5500",
     "http://localhost:3000",
-    "https://ten-web-cua-cau.netlify.app"
-  ]
+    "https://novachillmc.netlify.app",
+    "https://novachillmc-web.netlify.app",
+    "https://novachillmc.site"
+  ],
+  methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "x-admin-key"]
 }));
 
 app.use(express.json({ limit: "20kb" }));
+
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  message: {
+    error: "Quá nhiều request, thử lại sau 1 phút"
+  }
+});
 
 const registerLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -32,25 +51,19 @@ app.get("/", (req, res) => {
   });
 });
 
-function checkAdmin(req, res, next) {
-  const adminKey = req.headers["x-admin-key"];
+app.get("/api", (req, res) => {
+  res.json({
+    status: "online",
+    api: "NovaChillMC API"
+  });
+});
 
-  if (!process.env.ADMIN_KEY) {
-    return res.status(500).json({
-      error: "Server chưa cấu hình ADMIN_KEY"
-    });
-  }
+app.use("/api", apiLimiter);
 
-  if (adminKey !== process.env.ADMIN_KEY) {
-    return res.status(401).json({
-      error: "Không có quyền admin"
-    });
-  }
-
-  next();
-}
-
+// PUBLIC ROUTE
 app.use("/api/players", registerLimiter, playersRoute);
+
+// ADMIN ROUTE
 app.use("/api/admin/players", checkAdmin, playersRoute);
 
 const PORT = process.env.PORT || 3000;

@@ -2,39 +2,55 @@ const totalPlayers = document.getElementById("totalPlayers");
 const playerList = document.getElementById("playerList");
 const addPlayerForm = document.getElementById("addPlayerForm");
 
+const adminModal = document.getElementById("admin-modal");
+const adminPassword = document.getElementById("admin-password");
+const adminLoginBtn = document.getElementById("admin-login-btn");
+
+let ADMIN_KEY = "";
+
 /*
- ADMIN LOGIN
+  ADMIN LOGIN MODAL
 */
 
-const ADMIN_KEY = prompt("Nhập mật khẩu admin:");
-
-if (!ADMIN_KEY) {
-
-  document.body.innerHTML = `
-    <div style="
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-      background:#020712;
-      color:white;
-      font-size:32px;
-      font-weight:900;
-      font-family:sans-serif;
-    ">
-      Không có quyền truy cập
+function lockAdminPage() {
+  addPlayerForm.style.display = "none";
+  playerList.innerHTML = `
+    <div class="empty">
+      Vui lòng nhập admin key để xem danh sách player.
     </div>
   `;
-
-  throw new Error("No admin key");
 }
+
+function unlockAdminPage() {
+  adminModal.style.display = "none";
+  addPlayerForm.style.display = "";
+}
+
+adminLoginBtn.addEventListener("click", async () => {
+  const key = adminPassword.value.trim();
+
+  if (!key) {
+    alert("Nhập admin key đã cậu ơi 😭");
+    adminPassword.focus();
+    return;
+  }
+
+  ADMIN_KEY = key;
+  unlockAdminPage();
+  await loadPlayers();
+});
+
+adminPassword.addEventListener("keydown", async (event) => {
+  if (event.key === "Enter") {
+    adminLoginBtn.click();
+  }
+});
 
 /*
  ESCAPE HTML
 */
 
 function escapeHtml(value) {
-
   return String(value)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -48,32 +64,22 @@ function escapeHtml(value) {
 */
 
 async function loadPlayers() {
-
   try {
-
-    const response = await fetch(
-      `${APP_CONFIG.API_URL}/admin/players`,
-      {
-        headers: {
-          "x-admin-key": ADMIN_KEY
-        }
+    const response = await fetch(`${APP_CONFIG.API_URL}/admin/players`, {
+      headers: {
+        "x-admin-key": ADMIN_KEY
       }
-    );
+    });
 
     const players = await response.json();
 
     if (!response.ok) {
-
-      throw new Error(
-        players.error ||
-        "Không tải được danh sách player"
-      );
-
+      throw new Error(players.error || "Không tải được danh sách player");
     }
 
     renderPlayers(players);
-
   } catch (error) {
+    adminModal.style.display = "flex";
 
     playerList.innerHTML = `
       <div class="empty">
@@ -90,67 +96,50 @@ async function loadPlayers() {
 */
 
 function renderPlayers(players) {
-
-  totalPlayers.textContent =
-    players.length;
+  totalPlayers.textContent = players.length;
 
   if (players.length === 0) {
-
     playerList.innerHTML = `
       <div class="empty">
         Chưa có player nào.
       </div>
     `;
-
     return;
   }
 
-  playerList.innerHTML =
-    players.map(player => `
+  playerList.innerHTML = players.map(player => `
+    <div class="player-item">
+      <div>
+        <h3>${escapeHtml(player.ingameName)}</h3>
 
-      <div class="player-item">
+        <p>
+          <b>Facebook:</b>
+          ${escapeHtml(player.facebookName)}
+        </p>
 
-        <div>
+        <p>
+          <b>Nền tảng:</b>
+          ${escapeHtml(player.platform)}
+        </p>
 
-          <h3>
-            ${escapeHtml(player.ingameName)}
-          </h3>
+        <p>
+          <b>Ghi chú:</b>
+          ${escapeHtml(player.note || "Không có")}
+        </p>
 
-          <p>
-            <b>Facebook:</b>
-            ${escapeHtml(player.facebookName)}
-          </p>
-
-          <p>
-            <b>Nền tảng:</b>
-            ${escapeHtml(player.platform)}
-          </p>
-
-          <p>
-            <b>Ghi chú:</b>
-            ${escapeHtml(player.note || "Không có")}
-          </p>
-
-          <p>
-            <b>Ngày đăng ký:</b>
-            ${escapeHtml(
-              formatDate(player.createdAt)
-            )}
-          </p>
-
-        </div>
-
-        <button
-          class="delete-btn"
-          onclick="deletePlayer(${player.id})">
-
-          Xóa
-
-        </button>
-
+        <p>
+          <b>Ngày đăng ký:</b>
+          ${escapeHtml(formatDate(player.createdAt))}
+        </p>
       </div>
 
-    `).join("");
+      <button
+        class="delete-btn"
+        onclick="deletePlayer(${player.id})">
+        Xóa
+      </button>
+    </div>
+  `).join("");
 }
 
 /*
@@ -158,42 +147,27 @@ function renderPlayers(players) {
 */
 
 async function deletePlayer(id) {
-
-  const confirmDelete =
-    confirm("Xóa player này nha?");
+  const confirmDelete = confirm("Xóa player này nha?");
 
   if (!confirmDelete) return;
 
   try {
-
-    const response = await fetch(
-      `${APP_CONFIG.API_URL}/admin/players/${id}`,
-      {
-        method: "DELETE",
-
-        headers: {
-          "x-admin-key": ADMIN_KEY
-        }
+    const response = await fetch(`${APP_CONFIG.API_URL}/admin/players/${id}`, {
+      method: "DELETE",
+      headers: {
+        "x-admin-key": ADMIN_KEY
       }
-    );
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
-
-      throw new Error(
-        data.error ||
-        "Không xóa được player"
-      );
-
+      throw new Error(data.error || "Không xóa được player");
     }
 
     await loadPlayers();
-
   } catch (error) {
-
     alert(error.message);
-
   }
 }
 
@@ -201,96 +175,54 @@ async function deletePlayer(id) {
  ADD PLAYER
 */
 
-addPlayerForm.addEventListener(
-  "submit",
-  async (event) => {
+addPlayerForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-    event.preventDefault();
+  const player = {
+    ingameName: document.getElementById("adminIngame").value.trim(),
+    facebookName: document.getElementById("adminFacebook").value.trim(),
+    platform: document.getElementById("adminPlatform").value,
+    note: document.getElementById("adminNote").value.trim()
+  };
 
-    const player = {
+  try {
+    const response = await fetch(`${APP_CONFIG.API_URL}/admin/players`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-key": ADMIN_KEY
+      },
+      body: JSON.stringify(player)
+    });
 
-      ingameName:
-        document.getElementById("adminIngame")
-        .value
-        .trim(),
+    const data = await response.json();
 
-      facebookName:
-        document.getElementById("adminFacebook")
-        .value
-        .trim(),
-
-      platform:
-        document.getElementById("adminPlatform")
-        .value,
-
-      note:
-        document.getElementById("adminNote")
-        .value
-        .trim()
-
-    };
-
-    try {
-
-      const response = await fetch(
-        `${APP_CONFIG.API_URL}/admin/players`,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-            "x-admin-key": ADMIN_KEY
-          },
-
-          body: JSON.stringify(player)
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-
-        throw new Error(
-          data.error ||
-          "Không thêm được player"
-        );
-
-      }
-
-      addPlayerForm.reset();
-
-      await loadPlayers();
-
-    } catch (error) {
-
-      alert(error.message);
-
+    if (!response.ok) {
+      throw new Error(data.error || "Không thêm được player");
     }
 
+    addPlayerForm.reset();
+    await loadPlayers();
+  } catch (error) {
+    alert(error.message);
   }
-);
+});
 
 /*
  FORMAT DATE
 */
 
 function formatDate(dateString) {
+  if (!dateString) return "Không rõ";
 
-  if (!dateString)
-    return "Không rõ";
+  const date = new Date(dateString);
 
-  const date =
-    new Date(dateString);
-
-  if (
-    Number.isNaN(date.getTime())
-  ) {
-
+  if (Number.isNaN(date.getTime())) {
     return dateString;
-
   }
 
   return date.toLocaleString("vi-VN");
 }
 
-loadPlayers();
+lockAdminPage();
+adminPassword.focus();
