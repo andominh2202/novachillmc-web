@@ -20,7 +20,8 @@ app.use(cors({
     "http://localhost:3000",
     "https://novachillmc.netlify.app",
     "https://novachillmc-web.netlify.app",
-    "https://novachillmc.site"
+    "https://novachillmc.site",
+    "https://www.novachillmc.site"
   ],
   methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "x-admin-key"]
