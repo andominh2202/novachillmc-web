@@ -23,19 +23,26 @@ const editPlatform = document.getElementById("editPlatform");
 const editNote = document.getElementById("editNote");
 const closeEditBtn = document.getElementById("closeEditBtn");
 
+const pageSizeSelect = document.getElementById("pageSize");
+const prevPageBtn = document.getElementById("prevPage");
+const nextPageBtn = document.getElementById("nextPage");
+const currentPageText = document.getElementById("currentPage");
+
 let ADMIN_KEY = "";
 let CURRENT_PLAYERS = [];
+let currentPage = 1;
+let searchTimeout;
 
-/*
-  ADMIN LOGIN MODAL
-*/
+/* ADMIN LOGIN */
 
 function lockAdminPage() {
   addPlayerForm.style.display = "none";
   playerList.innerHTML = `
-    <div class="empty">
-      Vui lòng nhập admin key để xem danh sách player.
-    </div>
+    <tr>
+      <td colspan="7" class="empty-row">
+        Vui lòng nhập admin key để xem danh sách player.
+      </td>
+    </tr>
   `;
 }
 
@@ -59,14 +66,10 @@ adminLoginBtn.addEventListener("click", async () => {
 });
 
 adminPassword.addEventListener("keydown", async (event) => {
-  if (event.key === "Enter") {
-    adminLoginBtn.click();
-  }
+  if (event.key === "Enter") adminLoginBtn.click();
 });
 
-/*
- ESCAPE HTML
-*/
+/* HELPERS */
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -77,32 +80,39 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-/*
- QUERY FILTERS
-*/
-
 function buildQueryString() {
   const params = new URLSearchParams();
 
-  const search = searchInput.value.trim();
-  const platform = platformFilter.value;
-  const from = fromDate.value;
-  const to = toDate.value;
-  const sort = sortSelect.value || "newest";
-
-  if (search) params.set("search", search);
-  if (platform) params.set("platform", platform);
-  if (from) params.set("from", from);
-  if (to) params.set("to", to);
-  if (sort) params.set("sort", sort);
+  if (searchInput.value.trim()) params.set("search", searchInput.value.trim());
+  if (platformFilter.value) params.set("platform", platformFilter.value);
+  if (fromDate.value) params.set("from", fromDate.value);
+  if (toDate.value) params.set("to", toDate.value);
+  if (sortSelect.value) params.set("sort", sortSelect.value);
 
   const query = params.toString();
   return query ? `?${query}` : "";
 }
 
-/*
- LOAD PLAYERS
-*/
+function formatPlatform(platform) {
+  if (platform === "Java") return "PC / Java";
+  if (platform === "Bedrock") return "PE / Bedrock";
+  return platform || "Không rõ";
+}
+
+function normalizePlatformForForm(platform) {
+  if (platform === "Java" || platform === "PC" || platform === "Windows") return "Java";
+  if (platform === "Bedrock" || platform === "PE") return "Bedrock";
+  return "Bedrock";
+}
+
+function formatDate(dateString) {
+  if (!dateString) return "Không rõ";
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString;
+  return date.toLocaleString("vi-VN");
+}
+
+/* LOAD */
 
 async function loadPlayers() {
   try {
@@ -122,86 +132,94 @@ async function loadPlayers() {
     }
 
     CURRENT_PLAYERS = players;
-    renderPlayers(players);
+    currentPage = 1;
+    renderPlayers();
   } catch (error) {
     adminModal.style.display = "flex";
+    totalPlayers.textContent = "0";
 
     playerList.innerHTML = `
-      <div class="empty">
-        ${escapeHtml(error.message)}
-      </div>
+      <tr>
+        <td colspan="7" class="empty-row">
+          ${escapeHtml(error.message)}
+        </td>
+      </tr>
     `;
-
-    totalPlayers.textContent = "0";
   }
 }
 
-/*
- RENDER PLAYERS
-*/
+/* RENDER */
 
-function renderPlayers(players) {
-  totalPlayers.textContent = players.length;
+function getPaginatedPlayers() {
+  const pageSize = Number(pageSizeSelect.value || 10);
+  const start = (currentPage - 1) * pageSize;
+  return CURRENT_PLAYERS.slice(start, start + pageSize);
+}
+
+function renderPlayers() {
+  totalPlayers.textContent = CURRENT_PLAYERS.length;
+
+  const pageSize = Number(pageSizeSelect.value || 10);
+  const totalPages = Math.max(1, Math.ceil(CURRENT_PLAYERS.length / pageSize));
+
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  currentPageText.textContent = currentPage;
+  prevPageBtn.disabled = currentPage <= 1;
+  nextPageBtn.disabled = currentPage >= totalPages;
+
+  const players = getPaginatedPlayers();
 
   if (players.length === 0) {
     playerList.innerHTML = `
-      <div class="empty">
-        Không tìm thấy player nào.
-      </div>
+      <tr>
+        <td colspan="7" class="empty-row">
+          Không tìm thấy player nào.
+        </td>
+      </tr>
     `;
     return;
   }
 
-  playerList.innerHTML = players.map(player => `
-    <div class="player-item">
-      <div>
-        <h3>${escapeHtml(player.ingameName)}</h3>
+  const offset = (currentPage - 1) * pageSize;
 
-        <p>
-          <b>Facebook:</b>
-          ${escapeHtml(player.facebookName)}
-        </p>
-
-        <p>
-          <b>Nền tảng:</b>
+  playerList.innerHTML = players.map((player, index) => `
+    <tr>
+      <td>${offset + index + 1}</td>
+      <td>
+        <span class="player-name">
+          ${escapeHtml(player.ingameName)}
+        </span>
+      </td>
+      <td>${escapeHtml(player.facebookName)}</td>
+      <td>
+        <span class="platform-pill">
           ${escapeHtml(formatPlatform(player.platform))}
-        </p>
-
-        <p>
-          <b>Ghi chú:</b>
+        </span>
+      </td>
+      <td>
+        <span class="${player.note ? "" : "note-muted"}">
           ${escapeHtml(player.note || "Không có")}
-        </p>
-
-        <p>
-          <b>Ngày đăng ký:</b>
-          ${escapeHtml(formatDate(player.createdAt))}
-        </p>
-      </div>
-
-      <div class="player-actions">
-        <button
-          class="edit-btn"
-          onclick="openEditPlayer(${player.id})">
-          Sửa
-        </button>
-
-        <button
-          class="delete-btn"
-          onclick="deletePlayer(${player.id})">
-          Xóa
-        </button>
-      </div>
-    </div>
+        </span>
+      </td>
+      <td>${escapeHtml(formatDate(player.createdAt))}</td>
+      <td>
+        <div class="player-actions">
+          <button class="edit-btn" onclick="openEditPlayer(${player.id})">
+            ✎ Sửa
+          </button>
+          <button class="delete-btn" onclick="deletePlayer(${player.id})">
+            🗑 Xóa
+          </button>
+        </div>
+      </td>
+    </tr>
   `).join("");
 }
 
-/*
- FILTER EVENTS
-*/
+/* FILTER */
 
-filterBtn.addEventListener("click", async () => {
-  await loadPlayers();
-});
+filterBtn.addEventListener("click", loadPlayers);
 
 resetFilterBtn.addEventListener("click", async () => {
   searchInput.value = "";
@@ -209,48 +227,40 @@ resetFilterBtn.addEventListener("click", async () => {
   fromDate.value = "";
   toDate.value = "";
   sortSelect.value = "newest";
-
   await loadPlayers();
 });
 
-searchInput.addEventListener("keydown", async (event) => {
-  if (event.key === "Enter") {
-    await loadPlayers();
+searchInput.addEventListener("input", () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(loadPlayers, 350);
+});
+
+platformFilter.addEventListener("change", loadPlayers);
+sortSelect.addEventListener("change", loadPlayers);
+
+pageSizeSelect.addEventListener("change", () => {
+  currentPage = 1;
+  renderPlayers();
+});
+
+prevPageBtn.addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderPlayers();
   }
 });
 
-/*
- DELETE PLAYER
-*/
+nextPageBtn.addEventListener("click", () => {
+  const pageSize = Number(pageSizeSelect.value || 10);
+  const totalPages = Math.max(1, Math.ceil(CURRENT_PLAYERS.length / pageSize));
 
-async function deletePlayer(id) {
-  const confirmDelete = confirm("Xóa player này nha?");
-
-  if (!confirmDelete) return;
-
-  try {
-    const response = await fetch(`${APP_CONFIG.API_URL}/admin/players/${id}`, {
-      method: "DELETE",
-      headers: {
-        "x-admin-key": ADMIN_KEY
-      }
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Không xóa được player");
-    }
-
-    await loadPlayers();
-  } catch (error) {
-    alert(error.message);
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderPlayers();
   }
-}
+});
 
-/*
- ADD PLAYER
-*/
+/* ADD PLAYER */
 
 addPlayerForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -285,9 +295,7 @@ addPlayerForm.addEventListener("submit", async (event) => {
   }
 });
 
-/*
- EDIT PLAYER
-*/
+/* EDIT */
 
 function openEditPlayer(id) {
   const player = CURRENT_PLAYERS.find(item => Number(item.id) === Number(id));
@@ -313,10 +321,12 @@ function closeEditModal() {
 
 closeEditBtn.addEventListener("click", closeEditModal);
 
-editModal.addEventListener("click", (event) => {
-  if (event.target === editModal) {
-    closeEditModal();
-  }
+editModal.addEventListener("click", event => {
+  if (event.target === editModal) closeEditModal();
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeEditModal();
 });
 
 editPlayerForm.addEventListener("submit", async (event) => {
@@ -354,38 +364,29 @@ editPlayerForm.addEventListener("submit", async (event) => {
   }
 });
 
-/*
- HELPERS
-*/
+/* DELETE */
 
-function normalizePlatformForForm(platform) {
-  if (platform === "Java" || platform === "PC" || platform === "Windows") {
-    return "Java";
+async function deletePlayer(id) {
+  if (!confirm("Xóa player này nha?")) return;
+
+  try {
+    const response = await fetch(`${APP_CONFIG.API_URL}/admin/players/${id}`, {
+      method: "DELETE",
+      headers: {
+        "x-admin-key": ADMIN_KEY
+      }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Không xóa được player");
+    }
+
+    await loadPlayers();
+  } catch (error) {
+    alert(error.message);
   }
-
-  if (platform === "Bedrock" || platform === "PE") {
-    return "Bedrock";
-  }
-
-  return "Bedrock";
-}
-
-function formatPlatform(platform) {
-  if (platform === "Java") return "PC / Java";
-  if (platform === "Bedrock") return "PE / Bedrock";
-  return platform || "Không rõ";
-}
-
-function formatDate(dateString) {
-  if (!dateString) return "Không rõ";
-
-  const date = new Date(dateString);
-
-  if (Number.isNaN(date.getTime())) {
-    return dateString;
-  }
-
-  return date.toLocaleString("vi-VN");
 }
 
 lockAdminPage();

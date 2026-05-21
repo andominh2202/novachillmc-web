@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="./assets/images/favicon.png">
   <title>NovaChillMC - Quản lý</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="./css/home.css" />
   <link rel="stylesheet" href="./css/admin.css" />
 </head>
@@ -29,41 +31,47 @@
   </header>
 
   <main class="admin-page">
-    <section class="admin-top">
+    <section class="admin-hero">
       <div>
         <div class="pill">◆ ADMIN PANEL</div>
         <h1>Quản lý player</h1>
+        <p>Thêm, tìm kiếm và quản lý người chơi trên server</p>
       </div>
 
       <div class="count-box">
-        <span>Tổng player</span>
-        <strong id="totalPlayers">0</strong>
+        <div>
+          <span>Tổng player</span>
+          <strong id="totalPlayers">0</strong>
+        </div>
+        <div class="count-icon">👥</div>
       </div>
     </section>
 
-    <section class="admin-layout">
+    <section class="admin-tools">
       <form id="addPlayerForm" class="admin-card">
-        <h2>Thêm player</h2>
+        <h2>♙ Thêm player</h2>
 
-        <input id="adminIngame" type="text" placeholder="Tên ingame" required>
-        <input id="adminFacebook" type="text" placeholder="Tên Facebook" required>
+        <div class="form-grid">
+          <input id="adminIngame" type="text" placeholder="Tên ingame" required>
+          <input id="adminFacebook" type="text" placeholder="Tên Facebook" required>
 
-        <select id="adminPlatform" required>
-          <option value="">Chọn nền tảng</option>
-          <option value="Bedrock">PE / Bedrock</option>
-          <option value="Java">PC / Java</option>
-        </select>
+          <select id="adminPlatform" required>
+            <option value="">Chọn nền tảng</option>
+            <option value="Bedrock">PE / Bedrock</option>
+            <option value="Java">PC / Java</option>
+          </select>
 
-        <textarea id="adminNote" rows="4" placeholder="Ghi chú"></textarea>
+          <textarea id="adminNote" rows="1" placeholder="Ghi chú (không bắt buộc)"></textarea>
+        </div>
 
-        <button type="submit">THÊM PLAYER</button>
+        <button type="submit" class="primary-btn">THÊM PLAYER</button>
       </form>
 
       <section class="admin-card">
-        <h2>Danh sách player</h2>
+        <h2>♙ Tìm kiếm & lọc</h2>
 
-        <div class="admin-filters">
-          <input id="searchInput" type="text" placeholder="Tìm ingame / Facebook">
+        <div class="filter-grid">
+          <input id="searchInput" type="text" placeholder="Tìm ingame / Facebook...">
 
           <select id="platformFilter">
             <option value="">Tất cả nền tảng</option>
@@ -78,49 +86,72 @@
             <option value="newest">Mới nhất</option>
             <option value="oldest">Cũ nhất</option>
           </select>
-
-          <button id="filterBtn" type="button">TÌM</button>
-          <button id="resetFilterBtn" type="button">RESET</button>
         </div>
 
-        <div id="playerList" class="player-list"></div>
+        <div class="filter-actions">
+          <button id="filterBtn" type="button" class="primary-btn">TÌM KIẾM</button>
+          <button id="resetFilterBtn" type="button" class="ghost-btn">⟳ RESET</button>
+        </div>
       </section>
+    </section>
+
+    <section class="admin-card player-table-card">
+      <h2>♙ Danh sách player</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Ingame</th>
+              <th>Facebook</th>
+              <th>Nền tảng</th>
+              <th>Ghi chú</th>
+              <th>Ngày đăng ký</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="playerList"></tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <div>
+          Hiển thị
+          <select id="pageSize">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+          kết quả mỗi trang
+        </div>
+
+        <div class="pagination">
+          <button id="prevPage" type="button">‹</button>
+          <span id="currentPage">1</span>
+          <button id="nextPage" type="button">›</button>
+        </div>
+      </div>
     </section>
   </main>
 
-  <!-- ADMIN LOGIN MODAL -->
   <div id="admin-modal" class="admin-modal">
     <div class="admin-box">
       <div class="admin-lock">🔐</div>
-
       <h2>NovaChillMC Admin</h2>
-
-      <p>
-        Nhập khóa quản trị để truy cập bảng điều khiển
-      </p>
-
-      <input
-        type="password"
-        id="admin-password"
-        placeholder="Nhập admin key..."
-      >
-
-      <button id="admin-login-btn">
-        Truy cập quản trị
-      </button>
+      <p>Nhập khóa quản trị để truy cập bảng điều khiển</p>
+      <input type="password" id="admin-password" placeholder="Nhập admin key...">
+      <button id="admin-login-btn">Truy cập quản trị</button>
     </div>
   </div>
 
-  <!-- EDIT PLAYER MODAL -->
   <div id="edit-modal" class="admin-modal edit-modal">
     <div class="admin-box edit-box">
       <div class="admin-lock">✎</div>
-
       <h2>Sửa player</h2>
 
       <form id="editPlayerForm">
         <input id="editPlayerId" type="hidden">
-
         <input id="editIngame" type="text" placeholder="Tên ingame" required>
         <input id="editFacebook" type="text" placeholder="Tên Facebook" required>
 
@@ -137,7 +168,7 @@
     </div>
   </div>
 
-  <script src="./js/config.js?v=5"></script>
-  <script src="./js/admin.js?v=5"></script>
+  <script src="./js/config.js?v=6"></script>
+  <script src="./js/admin.js?v=6"></script>
 </body>
 </html>
