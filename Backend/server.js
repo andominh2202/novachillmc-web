@@ -18,12 +18,18 @@ app.use(cors({
     "http://127.0.0.1:5500",
     "http://localhost:5500",
     "http://localhost:3000",
+
     "https://novachillmc.netlify.app",
     "https://novachillmc-web.netlify.app",
+
+    "https://novachillmc-web.vercel.app",
+
     "https://novachillmc.site",
     "https://www.novachillmc.site"
   ],
+
   methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"],
+
   allowedHeaders: ["Content-Type", "x-admin-key"]
 }));
 
