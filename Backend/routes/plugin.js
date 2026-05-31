@@ -55,13 +55,28 @@ router.get("/whitelist/jobs", checkPluginToken, async (req, res) => {
 // Plugin báo đã add whitelist xong
 router.post("/whitelist/jobs/complete", checkPluginToken, async (req, res) => {
   try {
-    const { ids } = req.body;
+    console.log("=================================");
+    console.log("WHITELIST COMPLETE CALLED");
+    console.log("BODY:", JSON.stringify(req.body, null, 2));
+    console.log("=================================");
+
+    const ids =
+      req.body.ids ||
+      req.body.jobIds ||
+      req.body.completedIds ||
+      req.body.jobs ||
+      [];
 
     if (!Array.isArray(ids) || ids.length === 0) {
+      console.log("Không tìm thấy ids hợp lệ");
+
       return res.status(400).json({
         error: "ids không hợp lệ",
+        received: req.body,
       });
     }
+
+    console.log("SYNC IDS:", ids);
 
     await pool.query(
       `
@@ -70,8 +85,10 @@ router.post("/whitelist/jobs/complete", checkPluginToken, async (req, res) => {
           whitelist_synced_at = NOW()
       WHERE id = ANY($1::bigint[])
       `,
-      [ids],
+      [ids]
     );
+
+    console.log("Đã sync thành công", ids.length, "player(s)");
 
     res.json({
       success: true,
@@ -79,8 +96,10 @@ router.post("/whitelist/jobs/complete", checkPluginToken, async (req, res) => {
     });
   } catch (error) {
     console.error("Plugin whitelist complete error:", error);
+
     res.status(500).json({
       error: "Không thể cập nhật whitelist synced",
+      details: error.message,
     });
   }
 });
