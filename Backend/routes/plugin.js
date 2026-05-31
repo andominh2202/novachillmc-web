@@ -35,8 +35,12 @@ router.get("/whitelist/jobs", checkPluginToken, async (req, res) => {
 
     res.json({
       jobs: result.rows.map((player) => ({
-        id: player.id,
+        id: String(player.id),
+        player: player.ingame_name,
+        username: player.ingame_name,
+        name: player.ingame_name,
         playerName: player.ingame_name,
+        ingameName: player.ingame_name,
         action: "ADD",
       })),
     });
