@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="./assets/images/favicon.png">
+  <title>NovaChillMC - Đăng ký</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/home.css" />
+  <link rel="stylesheet" href="./css/register.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html" class="brand">
+      <div class="brand-icon">◈</div>
+      <span>NOVA<span>CHILL</span>MC</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html">⌂ Trang chủ</a>
+      <a href="./index.html#features">✧ Tính năng</a>
+      <a href="./gallery.html">▧ Hình ảnh</a>
+      <a href="./rules.html">⚖ Luật server</a>
+      <a class="active" href="./register.html">✎ Đăng ký</a>
+      <a href="./admin.html">✥ Quản lý</a>
+    </nav>
+  </header>
+
+  <main class="form-page">
+    <section class="form-card">
+      <div class="pill">◆ NOVA CHILL MC</div>
+      <h1>Đăng ký chơi server</h1>
+      <p>Điền thông tin bên dưới để admin duyệt player nhé.</p>
+
+      <form id="registerForm">
+        <label>
+          Tên ingame
+          <input id="ingameName" type="text" placeholder="VD: SteveNova" required>
+        </label>
+
+        <label>
+          Tên Facebook
+          <input id="facebookName" type="text" placeholder="VD: Nguyễn Văn A" required>
+        </label>
+
+        <label>
+          Chơi PE hay PC
+          <select id="platform" required>
+            <option value="">Chọn nền tảng</option>
+            <option value="Bedrock">PE / Bedrock</option>
+            <option value="Java">PC / Java</option>
+          </select>
+        </label>
+
+        <label>
+          Ghi chú
+          <textarea id="note" rows="4" placeholder="Muốn nhắn gì cho admin thì ghi ở đây..."></textarea>
+        </label>
+
+        <button type="submit">GỬI ĐĂNG KÝ</button>
+      </form>
+
+      <div id="formMessage"></div>
+    </section>
+  </main>
+
+  <script defer src="./js/config.js?v=3"></script>
+  <script defer src="./js/register.js?v=7"></script>
+</body>
+</html>

@@ -1,0 +1,484 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Be Vietnam Pro", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(32, 227, 255, 0.12), transparent 34%),
+    radial-gradient(circle at top right, rgba(132, 83, 255, 0.18), transparent 30%),
+    #020914;
+  color: #fff;
+}
+
+.admin-page {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 56px 32px 34px;
+}
+
+.admin-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 34px;
+}
+
+.admin-hero h1 {
+  margin: 16px 0 8px;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.admin-hero p {
+  color: #c8d8ef;
+  font-weight: 500;
+  margin: 0;
+}
+
+.count-box {
+  min-width: 330px;
+  padding: 28px 34px;
+  border: 1px solid rgba(32, 227, 255, 0.22);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(13, 34, 67, 0.9), rgba(13, 18, 48, 0.8));
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.count-box span {
+  display: block;
+  color: #e7f4ff;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.count-box strong {
+  display: block;
+  margin-top: 6px;
+  color: #20e3ff;
+  font-size: 52px;
+  line-height: 1;
+}
+
+.count-icon {
+  font-size: 54px;
+  filter: drop-shadow(0 0 18px rgba(132, 83, 255, 0.8));
+}
+
+.admin-tools {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-bottom: 28px;
+}
+
+.admin-card {
+  border: 1px solid rgba(32, 227, 255, 0.22);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(7, 20, 38, 0.9), rgba(8, 15, 34, 0.92));
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+  padding: 28px;
+}
+
+.admin-card h2 {
+  margin: 0 0 24px;
+  color: #20e3ff;
+  font-size: 22px;
+  text-transform: uppercase;
+}
+
+.admin-tools .admin-card:first-child h2 {
+  color: #a56bff;
+}
+
+.form-grid,
+.filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.admin-card input,
+.admin-card select,
+.admin-card textarea,
+.admin-box input,
+.admin-box select,
+.admin-box textarea {
+  width: 100%;
+  min-height: 58px;
+  border: 1px solid rgba(32, 227, 255, 0.25);
+  border-radius: 12px;
+  background: rgba(2, 9, 20, 0.75);
+  color: #fff;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 700;
+  outline: none;
+}
+
+.admin-card textarea,
+.admin-box textarea {
+  padding-top: 17px;
+  resize: vertical;
+}
+
+.admin-card input::placeholder,
+.admin-card textarea::placeholder {
+  color: rgba(229, 241, 255, 0.55);
+}
+
+.primary-btn,
+.ghost-btn,
+.admin-box button,
+.edit-btn,
+.delete-btn {
+  border: 0;
+  border-radius: 12px;
+  min-height: 56px;
+  padding: 0 18px;
+  color: #fff;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.primary-btn,
+.admin-box button {
+  background: linear-gradient(90deg, #20e3ff, #3178ff, #8b4dff);
+  box-shadow: 0 12px 32px rgba(49, 120, 255, 0.2);
+}
+
+.ghost-btn {
+  background: rgba(8, 15, 34, 0.72);
+  border: 1px solid rgba(139, 77, 255, 0.65);
+}
+
+.primary-btn:hover,
+.ghost-btn:hover,
+.edit-btn:hover,
+.delete-btn:hover,
+.admin-box button:hover {
+  transform: translateY(-2px);
+}
+
+#addPlayerForm .primary-btn {
+  width: 100%;
+  margin-top: 22px;
+}
+
+.filter-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.player-table-card {
+  padding: 28px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid rgba(32, 227, 255, 0.14);
+  border-radius: 14px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+thead {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+th,
+td {
+  padding: 22px 20px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #e7f4ff;
+}
+
+th {
+  text-transform: uppercase;
+  font-size: 13px;
+  color: #cddaf0;
+}
+
+td:first-child,
+th:first-child {
+  width: 60px;
+}
+
+.player-name {
+  color: #20e3ff;
+  font-weight: 900;
+}
+
+.platform-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(32, 227, 255, 0.2), rgba(139, 77, 255, 0.35));
+  color: #20e3ff;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.note-muted {
+  color: rgba(229, 241, 255, 0.62);
+  font-style: italic;
+}
+
+.player-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.edit-btn {
+  min-height: 42px;
+  border: 1px solid rgba(32, 145, 255, 0.85);
+  background: rgba(17, 60, 110, 0.4);
+  color: #4bb7ff;
+}
+
+.delete-btn {
+  min-height: 42px;
+  border: 1px solid rgba(255, 72, 100, 0.9);
+  background: rgba(110, 17, 40, 0.4);
+  color: #ff6d83;
+}
+
+.table-footer {
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #c8d8ef;
+  gap: 20px;
+}
+
+#pageSize {
+  width: 78px;
+  min-height: 46px;
+  margin: 0 8px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination button,
+.pagination span {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  border: 1px solid rgba(32, 227, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+}
+
+.pagination span {
+  background: #20e3ff;
+  color: #02101d;
+}
+
+.empty-row {
+  text-align: center;
+  padding: 34px;
+  color: #c8d8ef;
+}
+
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(2, 9, 20, 0.78);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.edit-modal {
+  display: none;
+}
+
+.admin-box {
+  width: min(430px, 100%);
+  padding: 34px;
+  border-radius: 24px;
+  border: 1px solid rgba(32, 227, 255, 0.2);
+  background: linear-gradient(135deg, rgba(7, 20, 38, 0.98), rgba(8, 15, 34, 0.98));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+  text-align: center;
+}
+
+.edit-box {
+  text-align: left;
+}
+
+.admin-lock {
+  font-size: 42px;
+  text-align: center;
+}
+
+.admin-box h2 {
+  margin: 14px 0 8px;
+  text-align: center;
+}
+
+.admin-box p {
+  color: #c8d8ef;
+  margin-bottom: 20px;
+}
+
+.admin-box input,
+.admin-box select,
+.admin-box textarea {
+  margin-bottom: 14px;
+}
+
+.admin-box button {
+  width: 100%;
+  margin-top: 4px;
+}
+
+#closeEditBtn {
+  background: rgba(255, 72, 100, 0.12);
+  border: 1px solid rgba(255, 72, 100, 0.45);
+}
+
+@media (max-width: 980px) {
+  .admin-hero,
+  .admin-tools {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .count-box {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .form-grid,
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 900;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.status-pending {
+  color: #ffd36b;
+  background: rgba(255, 196, 64, 0.13);
+  border-color: rgba(255, 196, 64, 0.45);
+}
+
+.status-approved {
+  color: #59ffa9;
+  background: rgba(44, 255, 153, 0.12);
+  border-color: rgba(44, 255, 153, 0.45);
+}
+
+.status-rejected {
+  color: #ff9aa9;
+  background: rgba(255, 72, 100, 0.12);
+  border-color: rgba(255, 72, 100, 0.45);
+}
+
+.status-blacklisted {
+  color: #ff6d83;
+  background: rgba(255, 72, 100, 0.2);
+  border-color: rgba(255, 72, 100, 0.75);
+}
+
+.admin-note {
+  margin-top: 8px;
+  color: #ffd36b;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.copy-command-btn,
+.approve-btn,
+.reject-btn,
+.blacklist-btn {
+  border: 0;
+  border-radius: 10px;
+  min-height: 42px;
+  padding: 0 12px;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.18s ease;
+  white-space: nowrap;
+}
+
+.copy-command-btn {
+  border: 1px solid rgba(32, 227, 255, 0.5);
+  background: rgba(32, 227, 255, 0.12);
+  color: #20e3ff;
+}
+
+.approve-btn {
+  border: 1px solid rgba(44, 255, 153, 0.65);
+  background: rgba(44, 255, 153, 0.12);
+  color: #59ffa9;
+}
+
+.reject-btn {
+  border: 1px solid rgba(255, 211, 107, 0.65);
+  background: rgba(255, 211, 107, 0.12);
+  color: #ffd36b;
+}
+
+.blacklist-btn {
+  border: 1px solid rgba(255, 72, 100, 0.75);
+  background: rgba(255, 72, 100, 0.14);
+  color: #ff6d83;
+}
+
+.copy-command-btn:hover,
+.approve-btn:hover,
+.reject-btn:hover,
+.blacklist-btn:hover {
+  transform: translateY(-2px);
+}
+
+.player-actions {
+  flex-wrap: wrap;
+  min-width: 360px;
+}
