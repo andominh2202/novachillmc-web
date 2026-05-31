@@ -21,7 +21,8 @@ function checkPluginToken(req, res, next) {
   next();
 }
 
-router.get("/whitelist-pending", checkPluginToken, async (req, res) => {
+// Plugin lấy danh sách người đã duyệt nhưng chưa sync whitelist
+router.get("/whitelist/jobs", checkPluginToken, async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT id, ingame_name
@@ -33,17 +34,22 @@ router.get("/whitelist-pending", checkPluginToken, async (req, res) => {
     `);
 
     res.json({
-      players: result.rows,
+      jobs: result.rows.map((player) => ({
+        id: player.id,
+        playerName: player.ingame_name,
+        action: "ADD",
+      })),
     });
   } catch (error) {
-    console.error("Plugin whitelist-pending error:", error);
+    console.error("Plugin whitelist jobs error:", error);
     res.status(500).json({
-      error: "Không thể lấy danh sách whitelist pending",
+      error: "Không thể lấy whitelist jobs",
     });
   }
 });
 
-router.post("/whitelist-synced", checkPluginToken, async (req, res) => {
+// Plugin báo đã add whitelist xong
+router.post("/whitelist/jobs/complete", checkPluginToken, async (req, res) => {
   try {
     const { ids } = req.body;
 
@@ -68,7 +74,7 @@ router.post("/whitelist-synced", checkPluginToken, async (req, res) => {
       synced: ids.length,
     });
   } catch (error) {
-    console.error("Plugin whitelist-synced error:", error);
+    console.error("Plugin whitelist complete error:", error);
     res.status(500).json({
       error: "Không thể cập nhật whitelist synced",
     });
