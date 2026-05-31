@@ -336,7 +336,9 @@ router.patch("/:id/status", async (req, res) => {
         UPDATE players
         SET status = $1,
             admin_note = COALESCE($2, admin_note),
-            reviewed_at = NOW()
+            reviewed_at = NOW(),
+            whitelist_synced = false,
+            whitelist_synced_at = NULL
         WHERE id = $3
         RETURNING ${PLAYER_COLUMNS}
       `,

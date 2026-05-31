@@ -53,52 +53,38 @@ router.get("/whitelist/jobs", checkPluginToken, async (req, res) => {
 });
 
 // Plugin báo đã add whitelist xong
-router.post("/whitelist/jobs/complete", checkPluginToken, async (req, res) => {
+router.get("/whitelist/jobs", checkPluginToken, async (req, res) => {
   try {
-    console.log("=================================");
-    console.log("WHITELIST COMPLETE CALLED");
-    console.log("BODY:", JSON.stringify(req.body, null, 2));
-    console.log("=================================");
-
-    const ids =
-      req.body.ids ||
-      req.body.jobIds ||
-      req.body.completedIds ||
-      req.body.jobs ||
-      [];
-
-    if (!Array.isArray(ids) || ids.length === 0) {
-      console.log("Không tìm thấy ids hợp lệ");
-
-      return res.status(400).json({
-        error: "ids không hợp lệ",
-        received: req.body,
-      });
-    }
-
-    console.log("SYNC IDS:", ids);
-
-    await pool.query(
-      `
-      UPDATE players
-      SET whitelist_synced = true,
-          whitelist_synced_at = NOW()
-      WHERE id = ANY($1::bigint[])
-      `,
-      [ids]
-    );
-
-    console.log("Đã sync thành công", ids.length, "player(s)");
+    const result = await pool.query(`
+      SELECT id, ingame_name, status
+      FROM players
+      WHERE (
+        status = 'approved'
+        AND (whitelist_synced = false OR whitelist_synced IS NULL)
+      )
+      OR (
+        status IN ('rejected', 'blacklisted')
+        AND (whitelist_synced = false OR whitelist_synced IS NULL)
+      )
+      ORDER BY reviewed_at ASC NULLS LAST, created_at ASC
+      LIMIT 20
+    `);
 
     res.json({
-      success: true,
-      synced: ids.length,
+      jobs: result.rows.map((player) => ({
+        id: String(player.id),
+        player: player.ingame_name,
+        username: player.ingame_name,
+        name: player.ingame_name,
+        playerName: player.ingame_name,
+        ingameName: player.ingame_name,
+        action: player.status === "approved" ? "ADD" : "REMOVE",
+      })),
     });
   } catch (error) {
-    console.error("Plugin whitelist complete error:", error);
-
+    console.error("Plugin whitelist jobs error:", error);
     res.status(500).json({
-      error: "Không thể cập nhật whitelist synced",
+      error: "Không thể lấy whitelist jobs",
       details: error.message,
     });
   }
